@@ -28,5 +28,6 @@ platform.on('close', function () {
 platform.once('ready', function (options) {
     airbrake = require('airbrake').createClient(options.api_key);
 
+    platform.log('Airbrake Exception Handler Initialized.');
 	platform.notifyReady();
 });
