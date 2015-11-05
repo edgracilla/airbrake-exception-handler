@@ -1,39 +1,34 @@
 'use strict';
 
 var platform = require('./platform'),
-    request = require('request'),
+	request  = require('request'),
 	apiKey, projectID;
 
 /*
  * Listen for the error event.
  */
 platform.on('error', function (error) {
-    request.post({
-        url: 'https://airbrake.io/api/v3/projects/'+ projectID +'/notices?key='+apiKey,
-        json: true,
-        body: {
-            notifier: {
-                name: 'Airbrake Exception Handler for Reekoh',
-                version: '0.1.0',
-                url: ''
-            },
-            errors: [
-                {
-                    type: error.name,
-                    message: error.message,
-                    backtrace: [
-                        {
-                            file: error.stack,
-                            line: null,
-                            'function': ''
-                        }
-                    ]
-                }
-            ]
-        }
-    }, function (error) {
-        if (error) platform.handleException(error);
-    });
+	request.post({
+		url: 'https://airbrake.io/api/v3/projects/' + projectID + '/notices?key=' + apiKey,
+		json: true,
+		body: {
+			notifier: {
+				name: 'Airbrake Exception Handler for Reekoh',
+				version: '0.1.0',
+				url: 'http://reekoh.com'
+			},
+			errors: [{
+				type: error.name,
+				message: error.message,
+				backtrace: [{
+					file: error.stack,
+					'function': ''
+				}]
+			}]
+		}
+	}, function (error) {
+		if (error) platform.handleException(error);
+	});
 });
 
 /*
@@ -47,9 +42,9 @@ platform.on('close', function () {
  * Listen for the ready event.
  */
 platform.once('ready', function (options) {
-    apiKey = options.api_key;
-    projectID = options.project_id;
+	apiKey = options.api_key;
+	projectID = options.project_id;
 
-    platform.log('Airbrake Exception Handler Initialized.');
+	platform.log('Airbrake Exception Handler Initialized.');
 	platform.notifyReady();
 });
