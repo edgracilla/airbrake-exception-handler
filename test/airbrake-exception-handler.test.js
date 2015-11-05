@@ -1,6 +1,7 @@
 'use strict';
 
-const API_KEY = '78b68be84139f3726ad237f390786762';
+const API_KEY = '8f88f22d08d6b5a552befae8195a54e0',
+    PROJECT_ID = '117263';
 
 var cp     = require('child_process'),
 	assert = require('assert'),
@@ -34,7 +35,8 @@ describe('Exception Handler', function () {
 				type: 'ready',
 				data: {
 					options: {
-						api_key: API_KEY
+						api_key: API_KEY,
+                        project_id: PROJECT_ID
 					}
 				}
 			}, function (error) {
