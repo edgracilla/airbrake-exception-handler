@@ -1,0 +1,14 @@
+{
+  "project_id": {
+    "label": "Project ID",
+    "type": "String",
+    "required": true,
+    "help": "Please provide your Airbrake.io Project ID."
+  },
+  "api_key": {
+	"label": "API KEY",
+	"type": "String",
+	"required": true,
+	"help": "Please provide your Airbrake.io API key."
+  }
+}
