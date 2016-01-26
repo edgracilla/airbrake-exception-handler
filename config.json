@@ -7,7 +7,7 @@
   },
   "api_key": {
 	"label": "API KEY",
-	"type": "String",
+	"type": "Password",
 	"required": true,
 	"help": "Please provide your Airbrake.io API key."
   }
