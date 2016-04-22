@@ -2,19 +2,19 @@
 
 var platform = require('./platform'),
 	request  = require('request'),
-	apiKey, projectID;
+	url;
 
 /*
  * Listen for the error event.
  */
 platform.on('error', function (error) {
 	request.post({
-		url: 'https://airbrake.io/api/v3/projects/' + projectID + '/notices?key=' + apiKey,
+		url: url,
 		json: true,
 		body: {
 			notifier: {
 				name: 'Airbrake Exception Handler for Reekoh',
-				version: '0.1.0',
+				version: '1.0.0',
 				url: 'http://reekoh.com'
 			},
 			errors: [{
@@ -42,8 +42,7 @@ platform.on('close', function () {
  * Listen for the ready event.
  */
 platform.once('ready', function (options) {
-	apiKey = options.api_key;
-	projectID = options.project_id;
+	url = `https://airbrake.io/api/v3/projects/${options.project_id}/notices?key=${options.api_key}`;
 
 	platform.log('Airbrake Exception Handler Initialized.');
 	platform.notifyReady();
