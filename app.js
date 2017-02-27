@@ -1,49 +1,43 @@
-'use strict';
+'use strict'
 
-var platform = require('./platform'),
-	request  = require('request'),
-	url;
+const reekoh = require('reekoh')
+const _plugin = new reekoh.plugins.ExceptionLogger()
+const request = require('request')
 
-/*
- * Listen for the error event.
- */
-platform.on('error', function (error) {
-	request.post({
-		url: url,
-		json: true,
-		body: {
-			notifier: {
-				name: 'Airbrake Exception Handler for Reekoh',
-				version: '1.0.0',
-				url: 'http://reekoh.com'
-			},
-			errors: [{
-				type: error.name,
-				message: error.message,
-				backtrace: [{
-					file: error.stack,
-					'function': ''
-				}]
-			}]
-		}
-	}, function (error) {
-		if (error) platform.handleException(error);
-	});
-});
+let url = null
 
-/*
- * Event to listen to in order to gracefully release all resources bound to this service.
- */
-platform.on('close', function () {
-	platform.notifyClose();
-});
+_plugin.on('exception', (error) => {
+  request.post({
+    url: url,
+    json: true,
+    body: {
+      notifier: {
+        name: 'Airbrake Exception Handler for Reekoh',
+        version: '1.0.0',
+        url: 'http://reekoh.com'
+      },
+      errors: [{
+        type: error.name,
+        message: error.message,
+        backtrace: [{
+          file: error.stack,
+          'function': ''
+        }]
+      }]
+    }
+  }, (error) => {
+    if (error) _plugin.logException(error)
+  })
+  _plugin.log(JSON.stringify({
+    title: 'Exception sent to Airbrake',
+    data: {message: error.message, stack: error.stack, name: error.name}
+  }))
+})
 
-/*
- * Listen for the ready event.
- */
-platform.once('ready', function (options) {
-	url = `https://airbrake.io/api/v3/projects/${options.project_id}/notices?key=${options.api_key}`;
+_plugin.once('ready', () => {
+  url = `https://airbrake.io/api/v3/projects/${_plugin.config.projectId}/notices?key=${_plugin.config.apiKey}`
+  _plugin.log('Air Brake Exception Logger has been initialized.')
+  _plugin.emit('init')
+})
 
-	platform.log('Airbrake Exception Handler Initialized.');
-	platform.notifyReady();
-});
+module.exports = _plugin
